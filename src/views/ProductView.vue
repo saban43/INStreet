@@ -5,7 +5,9 @@
 
     <div v-else-if="!product" class="not-found">
       <p>Ürün bulunamadı</p>
-      <router-link to="/" class="back-btn">Ana Sayfaya Dön</router-link>
+      <BaseButton variant="primary" size="md" @click="router.push('/')">
+        Ana Sayfaya Dön
+      </BaseButton>
     </div>
 
     <div v-else class="product-container">
@@ -31,52 +33,37 @@
         <p class="product-brand">{{ product.brand }}</p>
         <h1 class="product-title">{{ product.name }}</h1>
 
-        <!-- Fiyat -->
-        <div class="product-price">
-          <span v-if="product.discount > 0" class="original-price">
-            {{ formatPrice(product.price) }}
-          </span>
-          <span class="final-price">
-            {{ formatPrice(finalPrice) }}
-          </span>
-          <span v-if="product.discount > 0" class="discount-badge">
-            {{ discountPercentage }}% İndirim
-          </span>
-        </div>
+        <!-- Fiyat Molekülü kullan -->
+        <PriceDisplay :price="product.price" :discount="product.discount" class="mb-2" />
 
         <!-- Açıklama -->
         <p class="product-description">{{ product.description }}</p>
 
-        <!-- Beden Seçimi -->
-        <div class="size-selection">
-          <h3>Beden Seçin:</h3>
-          <div class="size-options">
-            <button
-              v-for="size in product.sizes"
-              :key="size"
-              :class="['size-btn', { active: selectedSize === size }]"
-              @click="selectedSize = size"
-            >
-              {{ size }}
-            </button>
-          </div>
-        </div>
+        <!-- Beden Seçici Molekülü kullan -->
+        <SizeSelector :sizes="product.sizes" v-model="selectedSize" class="mb-2" />
 
-        <!-- Stok Durumu -->
-        <div :class="['stock-status', stockStatus.color]">
+        <!-- Stok Durumu Badge -->
+        <BaseBadge
+          :variant="stockStatus.color === 'green' ? 'success' : 'danger'"
+          class="stock-badge mb-2"
+        >
           {{ stockStatus.text }}
-        </div>
+        </BaseBadge>
 
-        <!-- Sepete Ekle -->
-        <button
+        <!-- Sepete Ekle Butonu -->
+        <BaseButton
           v-if="product.stock > 0"
           @click="handleAddToCart"
           :disabled="!selectedSize"
+          variant="primary"
+          size="lg"
           class="add-to-cart-btn"
         >
           {{ selectedSize ? 'Sepete Ekle' : 'Lütfen Beden Seçin' }}
-        </button>
-        <button v-else class="add-to-cart-btn disabled" disabled>Stokta Yok</button>
+        </BaseButton>
+        <BaseButton v-else variant="secondary" size="lg" :disabled="true" class="add-to-cart-btn">
+          Stokta Yok
+        </BaseButton>
       </div>
     </div>
   </div>
@@ -84,12 +71,17 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useProducts } from '@/composables/useProducts'
 import { useCart } from '@/composables/useCart'
 import { formatPrice, getStockStatus } from '@/utils/formatPrice'
+import PriceDisplay from '@/components/molecules/PriceDisplay.vue'
+import SizeSelector from '@/components/molecules/SizeSelector.vue'
+import BaseButton from '@/components/atoms/BaseButton.vue'
+import BaseBadge from '@/components/atoms/BaseBadge.vue'
 
 const route = useRoute()
+const router = useRouter()
 const { loadProduct, selectedProduct: product, isLoading } = useProducts()
 const { addItem } = useCart()
 
@@ -201,99 +193,24 @@ onMounted(async () => {
   font-size: 2rem;
   margin-bottom: 1.5rem;
 }
-.product-price {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-.original-price {
-  color: #999;
-  text-decoration: line-through;
-  font-size: 1.2rem;
-}
-.final-price {
-  color: #ff7f00;
-  font-size: 2rem;
-  font-weight: 700;
-}
-.discount-badge {
-  background: #ff7f00;
-  color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-}
 .product-description {
   line-height: 1.6;
   color: #666;
   margin-bottom: 2rem;
 }
-.size-selection {
+
+.mb-2 {
   margin-bottom: 2rem;
 }
-.size-selection h3 {
-  margin-bottom: 1rem;
+
+.stock-badge {
+  display: inline-block;
 }
-.size-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-.size-btn {
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #ddd;
-  background: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
-}
-.size-btn:hover {
-  border-color: #ff7f00;
-}
-.size-btn.active {
-  border-color: #ff7f00;
-  background: #ff7f00;
-  color: white;
-}
-.stock-status {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-}
-.stock-status.green {
-  background: #e8f5e9;
-  color: #4caf50;
-}
-.stock-status.orange {
-  background: #fff3e0;
-  color: #ff9800;
-}
-.stock-status.red {
-  background: #ffebee;
-  color: #f44336;
-}
+
 .add-to-cart-btn {
   width: 100%;
-  padding: 1.25rem;
-  background: #000;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
 }
-.add-to-cart-btn:hover:not(:disabled) {
-  background: #333;
-}
-.add-to-cart-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
+
 @media (max-width: 768px) {
   .product-container {
     grid-template-columns: 1fr;

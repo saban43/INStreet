@@ -2,7 +2,41 @@
 <template>
   <div class="home-view">
     <Banner />
-    <ProductSearch />
+    <CategoryBubbles />
+    <ProductBanner
+      title="Futbol Ürünleri"
+      imageSrc="/Banners/futbol-urunleri/futbol-urunleri-in-25.webp"
+    />
+    <DualBanner
+      title="Yılbaşı Hediyeleri"
+      leftImageSrc="/Banners/yilbaşi-hediyeleri/yilbasi_hediyeleri_web_kadin.webp"
+      rightImageSrc="/Banners/yilbaşi-hediyeleri/yilbasi_hediyeleri_web_erkek.webp"
+      leftAlt="Kadın Yılbaşı Hediyeleri"
+      rightAlt="Erkek Yılbaşı Hediyeleri"
+    />
+    <ProductBanner title="Nike" imageSrc="/Banners/nike/2nike.webp" />
+    <ProductBanner
+      title="Tarzına Uygun Botlar"
+      imageSrc="/Banners/tarzina-uygun-botlar/1bot.webp"
+    />
+    <ProductBanner title="Skechers" imageSrc="/Banners/skechers/4skechers.webp" />
+    <ProductBanner title="Çocuk" imageSrc="/Banners/cocuk/5cocuk.webp" />
+    <ProductBanner
+      title="Soğuğa Meydan Oku"
+      imageSrc="/Banners/soguga-meydan-oku/6global_outdoor.webp"
+    />
+    <DualBanner
+      title="Tommy Hilfiger - Calvin Klein - Vans - Converse"
+      leftImageSrc="/Banners/iyi-markalar/1-tommyck.webp"
+      rightImageSrc="/Banners/iyi-markalar/2-vansconverse.webp"
+      leftAlt="Tommy Hilfiger - Calvin Klein"
+      rightAlt="Vans - Converse"
+    />
+    <ProductBanner title="DC Shoes" imageSrc="/Banners/Dc-shoes/dc_shoes_tekli.gif" />
+    <ProductBanner
+      title="Jack Jones - Only - Only Sons - JJXX"
+      imageSrc="/Banners/pahali-markalar/7jjxxonlysons.webp"
+    />
     <div class="content-container">
       <aside class="sidebar">
         <ProductFilter />
@@ -23,10 +57,12 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useProducts } from '@/composables/useProducts'
-import Banner from '@/components/Banner.vue'
-import ProductSearch from '@/components/ProductSearch.vue'
-import ProductFilter from '@/components/ProductFilter.vue'
-import ProductCard from '@/components/ProductCard.vue'
+import Banner from '@/components/organisms/Banner.vue'
+import CategoryBubbles from '@/components/organisms/CategoryBubbles.vue'
+import ProductBanner from '@/components/organisms/ProductBanner.vue'
+import DualBanner from '@/components/organisms/DualBanner.vue'
+import ProductFilter from '@/components/organisms/ProductFilter.vue'
+import ProductCard from '@/components/organisms/ProductCard.vue'
 
 const { products, isLoading, loadProducts } = useProducts()
 
@@ -37,15 +73,16 @@ onMounted(async () => {
 
 <style scoped>
 .home-view {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 100px;
 }
 .content-container {
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 2rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
+  padding: 0 2rem;
 }
 .sidebar {
   height: fit-content;

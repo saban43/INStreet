@@ -13,7 +13,18 @@ export const useUserStore = defineStore('user', () => {
 
   // Hesaplanan değerler
   const isAuthenticated = computed(() => !!currentUser.value)
-  const isAdmin = computed(() => userData.value?.role === 'admin')
+
+  // Admin kontrolü - hem custom claim hem de Firestore role kontrolü
+  const isAdmin = computed(() => {
+    // Öncelik: Auth token'daki custom claim (Firebase Storage kuralları için)
+    if (currentUser.value) {
+      return (currentUser.value as any).reloadUserInfo?.customAttributes
+        ? JSON.parse((currentUser.value as any).reloadUserInfo.customAttributes).admin === true
+        : userData.value?.role === 'admin'
+    }
+    return userData.value?.role === 'admin'
+  })
+
   const userName = computed(() => userData.value?.name || currentUser.value?.displayName || '')
 
   // Kullanıcı durumunu dinle
@@ -22,6 +33,9 @@ export const useUserStore = defineStore('user', () => {
       currentUser.value = user
 
       if (user) {
+        // Token'ı yenile (custom claim'leri almak için)
+        await user.getIdToken(true)
+
         // Kullanıcı verilerini Firestore'dan getir
         const result = await getUserData(user.uid)
         if (result.success) {

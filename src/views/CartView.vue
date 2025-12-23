@@ -5,7 +5,9 @@
 
     <div v-if="!hasItems" class="empty-cart">
       <p>Sepetiniz boş</p>
-      <router-link to="/" class="shop-btn">Alışverişe Başla</router-link>
+      <BaseButton variant="primary" size="lg" @click="router.push('/')">
+        Alışverişe Başla
+      </BaseButton>
     </div>
 
     <div v-else class="cart-container">
@@ -45,17 +47,25 @@
         </div>
 
         <!-- Satın Al Butonu -->
-        <button
+        <BaseButton
           v-if="isAuthenticated"
           @click="handleCheckout"
           :disabled="isProcessing || !shippingAddress"
+          variant="primary"
+          size="lg"
           class="checkout-btn"
         >
           {{ isProcessing ? 'İşleniyor...' : 'Satın Al' }}
-        </button>
-        <router-link v-else to="/login" class="checkout-btn">
+        </BaseButton>
+        <BaseButton
+          v-else
+          variant="primary"
+          size="lg"
+          @click="router.push('/login')"
+          class="checkout-btn"
+        >
           Satın Almak İçin Giriş Yapın
-        </router-link>
+        </BaseButton>
       </div>
     </div>
   </div>
@@ -67,7 +77,8 @@ import { useRouter } from 'vue-router'
 import { useCart } from '@/composables/useCart'
 import { useUserStore } from '@/store/user'
 import { formatPrice } from '@/utils/formatPrice'
-import CartItem from '@/components/CartItem.vue'
+import CartItem from '@/components/molecules/CartItem.vue'
+import BaseButton from '@/components/atoms/BaseButton.vue'
 
 const router = useRouter()
 const { items, hasItems, subtotal, totalDiscount, total, checkout, isProcessing } = useCart()

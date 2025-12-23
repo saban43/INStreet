@@ -18,6 +18,9 @@ coverage
 .env
 .env.local
 
+# Firebase Admin SDK - ÇOK ÖNEMLİ: Bu dosyayı asla commit etmeyin!
+serviceAccountKey.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -1,7 +1,10 @@
 <!-- AdminView - Admin paneli -->
 <template>
   <div class="admin-view">
-    <h1>Admin Paneli</h1>
+    <div class="admin-header">
+      <h1>Admin Paneli</h1>
+      <button @click="debugAdminToken" class="debug-btn">🔍 Admin Yetkisini Kontrol Et</button>
+    </div>
 
     <div class="admin-tabs">
       <button
@@ -140,8 +143,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useProducts } from '@/composables/useProducts'
 import { useAdmin } from '@/composables/useAdmin'
 import { formatPrice } from '@/utils/formatPrice'
-import AdminProductForm from '@/components/AdminProductForm.vue'
+import AdminProductForm from '@/components/organisms/AdminProductForm.vue'
 import type { Product } from '@/store/products'
+import { checkAdminToken } from '@/utils/debugAuth'
 
 const { allProducts, loadProducts, isLoading: isLoadingProducts } = useProducts()
 const {
@@ -168,6 +172,18 @@ const bannerForm = ref({
   isActive: true,
   imageUrl: '',
 })
+
+// Debug fonksiyonu - Admin token kontrolü
+const debugAdminToken = async () => {
+  const result = await checkAdminToken()
+  if (result.isAdmin) {
+    alert('✅ Admin yetkisi aktif!\n\nÜrün ekleyebilirsiniz.')
+  } else {
+    alert(
+      '❌ Admin yetkisi YOK!\n\n' + result.message + '\n\nÇözüm: Çıkış yapıp tekrar giriş yapın.',
+    )
+  }
+}
 const bannerFile = ref<File | null>(null)
 
 onMounted(async () => {
@@ -464,5 +480,28 @@ th {
 }
 .cancel-btn {
   background: #f5f5f5;
+}
+
+/* Admin header */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.debug-btn {
+  padding: 0.75rem 1.5rem;
+  background: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.debug-btn:hover {
+  background: #357ae8;
 }
 </style>

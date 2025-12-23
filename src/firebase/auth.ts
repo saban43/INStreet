@@ -74,3 +74,23 @@ export const getUserData = async (uid: string) => {
     return { success: false, error: error.message }
   }
 }
+
+// Admin custom claim kontrolü
+export const checkAdminClaim = async () => {
+  try {
+    const user = auth.currentUser
+    if (!user) {
+      return { isAdmin: false }
+    }
+
+    // Token'ı yenile ve custom claim'leri al
+    const idTokenResult = await user.getIdTokenResult()
+    return {
+      isAdmin: idTokenResult.claims.admin === true,
+      claims: idTokenResult.claims,
+    }
+  } catch (error: any) {
+    console.error('Admin claim kontrol hatası:', error)
+    return { isAdmin: false, error: error.message }
+  }
+}

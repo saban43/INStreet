@@ -3,8 +3,8 @@
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import { useUserStore } from '@/store/user'
-import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
+import Navbar from '@/components/organisms/Navbar.vue'
+import Footer from '@/components/organisms/Footer.vue'
 
 const userStore = useUserStore()
 
